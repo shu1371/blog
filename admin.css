@@ -42,8 +42,8 @@ button { font: inherit; cursor: pointer; }
 .admin-brand { font-weight: 800; letter-spacing: 1px; }
 .admin-header a { font-size: 14px; opacity: 0.85; }
 .admin-main {
-  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px;
-  max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  max-width: 1280px; margin: 0 auto; padding: 32px 24px 60px;
 }
 .panel-head { display: flex; align-items: baseline; justify-content: space-between; }
 .panel-head h1 { margin: 0 0 16px; font-size: 26px; }
@@ -74,6 +74,11 @@ button { font: inherit; cursor: pointer; }
   background: #fff; font-size: 14px;
 }
 .order-controls button:disabled { opacity: 0.4; cursor: default; }
+.danger-link {
+  border: 1px solid var(--danger); color: var(--danger); background: #fff;
+  border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600;
+}
+.danger-link:hover { background: var(--danger); color: #fff; }
 .empty-state { color: #6b6b6b; }
 .panel-form {
   background: var(--card); border-radius: 20px; box-shadow: var(--shadow);

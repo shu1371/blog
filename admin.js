@@ -11,7 +11,8 @@ const request = (url, options = {}) => fetch(url, {
 });
 const escape = value => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const tags = items => (items || []).map(tag => `<span>${escape(tag)}</span>`).join('');
-const state = { projects: [], projectId: '' };
+const state = { projects: [], documents: [], projectId: '' };
+const formatSize = bytes => bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
 
 function notify(message, type = 'success') {
   const toast = $('status');
@@ -112,15 +113,62 @@ async function removeProject() {
   }
 }
 
+function renderDocuments() {
+  $('document-count').textContent = `${state.documents.length} 篇小结`;
+  $('document-cards').innerHTML = state.documents.map(doc => `<div class="card-stack"><div class="item-card"><span class="card-symbol">↓</span><span class="card-copy"><strong>${escape(doc.title)}</strong><small>${escape(doc.filename)} · ${escape(doc.date)} · ${escape(formatSize(doc.size))}</small></span></div><div class="order-controls"><button type="button" class="danger-link" data-document-delete="${escape(doc.id)}">删除</button></div></div>`).join('') || '<p class="empty-state">还没有学习小结。</p>';
+  document.querySelectorAll('[data-document-delete]').forEach(button => button.addEventListener('click', () => removeDocument(button.dataset.documentDelete)));
+}
+
+async function uploadDocument(event) {
+  event.preventDefault();
+  const file = $('document-file').files[0];
+  if (!file) return notify('请选择文件', 'error');
+  const form = new FormData();
+  form.append('file', file);
+  form.append('title', $('document-title').value);
+  form.append('date', $('document-date').value);
+  form.append('summary', $('document-summary').value);
+  const button = $('save-document');
+  setBusy(button, true);
+  try {
+    const response = await fetch('/api/admin/documents', { method: 'POST', credentials: 'same-origin', body: form });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw Error(data.error || '上传失败');
+    notify('文档已上传');
+    $('document-form').reset();
+    $('document-date').value = new Date().toISOString().slice(0, 10);
+    await loadState();
+  } catch (error) {
+    notify(error.message, 'error');
+  } finally {
+    setBusy(button, false);
+  }
+}
+
+async function removeDocument(id) {
+  if (!window.confirm('确定删除这份学习小结吗？')) return;
+  try {
+    await request(`/api/admin/documents/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    notify('文档已删除');
+    await loadState();
+  } catch (error) {
+    notify(error.message, 'error');
+  }
+}
+
 async function loadState() {
   const data = await request('/api/admin/state');
   state.projects = data.projects;
+  state.documents = data.documents || [];
   renderProjects();
+  renderDocuments();
 }
 
 $('project-form').addEventListener('submit', saveProject);
 $('new-project').addEventListener('click', newProject);
 $('delete-project').addEventListener('click', removeProject);
+$('document-form').addEventListener('submit', uploadDocument);
 loadState().catch(error => {
   $('project-cards').innerHTML = `<p class="empty-state">${escape(error.message)}</p>`;
+  $('document-cards').innerHTML = `<p class="empty-state">${escape(error.message)}</p>`;
 });

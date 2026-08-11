@@ -39,6 +39,28 @@
         </form>
         <p id="status" class="toast" role="status"></p>
       </section>
+      <section class="admin-col">
+        <div class="panel-head"><h1>学习小结</h1><span id="document-count"></span></div>
+        <form id="document-form" class="panel-form">
+          <h2>上传学习小结</h2>
+          <label>文件（doc / docx / pdf，≤10MB）
+            <input id="document-file" type="file" accept=".doc,.docx,.pdf" required />
+          </label>
+          <label>标题
+            <input id="document-title" maxlength="120" required placeholder="小结标题" />
+          </label>
+          <label>日期
+            <input id="document-date" type="date" required />
+          </label>
+          <label>简介（可选）
+            <textarea id="document-summary" maxlength="360" rows="2" placeholder="一句话简介"></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="submit" id="save-document" class="primary">上传</button>
+          </div>
+        </form>
+        <div id="document-cards" class="item-list"></div>
+      </section>
     </main>
     <script src="admin.js"></script>
   </body>
