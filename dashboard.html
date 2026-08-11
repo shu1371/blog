@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>内容管理 · lxtoxyf</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <span class="admin-brand">LXTXYF · 内容管理</span>
+      <a href="index.html">返回网站</a>
+    </header>
+    <main class="admin-main">
+      <section class="admin-col">
+        <div class="panel-head"><h1>项目</h1><span id="project-count"></span></div>
+        <div id="project-cards" class="item-list"></div>
+      </section>
+      <section class="admin-col">
+        <form id="project-form" class="panel-form">
+          <h2 id="project-form-mode">新建项目</h2>
+          <label>标题
+            <input id="project-title" maxlength="100" required placeholder="项目名称" />
+          </label>
+          <label>链接
+            <input id="project-url" maxlength="600" required placeholder="https://github.com/..." />
+          </label>
+          <label>简介
+            <textarea id="project-summary" maxlength="360" rows="3" required placeholder="一句话介绍"></textarea>
+          </label>
+          <label>标签（逗号分隔，最多 8 个）
+            <input id="project-tags" maxlength="200" placeholder="Python, MySQL" />
+          </label>
+          <div class="form-actions">
+            <button type="submit" id="save-project" class="primary">保存</button>
+            <button type="button" id="new-project" class="quiet">新建</button>
+            <button type="button" id="delete-project" class="danger" hidden>删除</button>
+          </div>
+        </form>
+        <p id="status" class="toast" role="status"></p>
+      </section>
+    </main>
+    <script src="admin.js"></script>
+  </body>
+</html>
