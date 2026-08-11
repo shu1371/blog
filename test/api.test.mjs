@@ -169,3 +169,20 @@ test('删除项目成功', async () => {
   assert.equal(saved.length, 1);
   assert.equal(saved[0].id, 'p1');
 });
+
+test('未提供 contentRoot 时使用 CONTENT_ROOT 环境变量', async () => {
+  const envBase = await mkdtemp(join(tmpdir(), 'lxtoxyf-env-'));
+  await mkdir(join(envBase, 'content'), { recursive: true });
+  await writeFile(join(envBase, 'content', 'projects.json'), JSON.stringify([{ id: 'e1', title: '环境项目', url: 'https://example.com/e', summary: '简介', tags: ['Node'] }]));
+  const srv = createApp({ siteRoot: repoRoot, env: { CONTENT_ROOT: join(envBase, 'content') } });
+  await new Promise(resolve => srv.listen(0, resolve));
+  try {
+    const res = await fetch(`http://127.0.0.1:${srv.address().port}/api/projects`);
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data[0].title, '环境项目');
+  } finally {
+    await new Promise(resolve => srv.close(resolve));
+    await rm(envBase, { recursive: true, force: true });
+  }
+});
