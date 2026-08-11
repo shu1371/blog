@@ -1,0 +1,4 @@
+lx-cloud.top {
+    encode zstd gzip
+    reverse_proxy lxtoxyf-site:3000
+}

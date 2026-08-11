@@ -1,0 +1,93 @@
+# lxtoxyf 个人网站部署说明
+
+## 1. Cloudflare DNS
+
+在 Cloudflare 的 `lx-cloud.top` 中添加 A 记录：
+
+| 类型 | 名称 | 内容 | 代理 |
+| --- | --- | --- | --- |
+| A | @ | 144.34.185.9 | 开启（橙云） |
+
+## 2. GitHub 内容仓库与令牌
+
+1. 在 GitHub 新建空仓库 `shu1371/blog`（默认分支 main）。
+2. 在 GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens 创建令牌：
+   - Repository access：仅 `shu1371/blog`
+   - Permissions → Contents：Read and write
+3. 复制令牌，保存到服务器 secrets 文件（见第 4 步）。
+
+## 3. 上传代码
+
+```bash
+cd lxtoxyf-site
+git branch -M main
+git remote add origin git@github.com:shu1371/blog.git
+git push -u origin main
+```
+
+## 4. 服务器部署
+
+```bash
+ssh root@144.34.185.9
+mkdir -p /opt/lx-cloud.top/{app,site,content,secrets}
+cd /opt/lx-cloud.top/app
+git clone https://github.com/shu1371/blog.git .
+```
+
+同步静态文件与内容（开发机推送后服务器拉取）：
+
+```bash
+cd /opt/lx-cloud.top/app && git pull
+rsync -a --exclude .git /opt/lx-cloud.top/app/ /opt/lx-cloud.top/site/
+```
+
+创建 secrets 文件：
+
+```bash
+cat > /opt/lx-cloud.top/secrets/site.env <<'EOF'
+ADMIN_PASSWORD=请设置一个强密码
+GITHUB_TOKEN=上一步创建的令牌
+SESSION_SECRET=请设置一段随机字符串
+EOF
+chmod 600 /opt/lx-cloud.top/secrets/site.env
+```
+
+构建并启动：
+
+```bash
+docker build -t lxtoxyf-site:latest /opt/lx-cloud.top/app
+docker run -d \
+  --name lxtoxyf-site \
+  --restart unless-stopped \
+  --env-file /opt/lx-cloud.top/secrets/site.env \
+  -v /opt/lx-cloud.top/site:/app/site:ro \
+  -v /opt/lx-cloud.top/content:/app/content:rw \
+  --network proxy \
+  lxtoxyf-site:latest
+```
+
+## 5. Caddy 接入
+
+在服务器现有 Caddyfile 末尾追加：
+
+```caddy
+lx-cloud.top {
+    encode zstd gzip
+    reverse_proxy lxtoxyf-site:3000
+}
+```
+
+验证并热加载：
+
+```bash
+docker exec caddy caddy validate --config /etc/caddy/Caddyfile
+docker exec caddy caddy reload --config /etc/caddy/Caddyfile
+```
+
+## 6. 验证清单
+
+1. `curl -I https://lx-cloud.top` 返回 200 且证书有效。
+2. 首页显示 2 个项目卡片与联系方式。
+3. `https://lx-cloud.top/admin.html` 登录成功。
+4. 后台新建/编辑/删除/排序后，`https://github.com/shu1371/blog` 出现对应提交。
+5. 内容目录纳入服务器备份。
