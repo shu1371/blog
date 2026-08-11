@@ -62,7 +62,7 @@ lxtoxyf-site/
 
 ### 后台保存
 
-浏览器提交表单 → Node 校验字段与登录态 → 调 GitHub Contents API 提交 `portfolio/content/projects.json`（实际路径 `content/projects.json`）→ 成功后写入服务器本地文件 → 返回最新数据。
+浏览器提交表单 → Node 校验字段与登录态 → 调 GitHub Contents API 提交 `content/projects.json` → 成功后写入服务器本地文件 → 返回最新数据。
 
 ## 6. API 设计
 
