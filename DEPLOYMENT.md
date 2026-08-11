@@ -93,7 +93,7 @@ docker exec caddy caddy reload --config /etc/caddy/Caddyfile
 ## 6. 验证清单
 
 1. `curl -I https://lx-cloud.top` 返回 200 且证书有效。
-2. 首页显示 2 个项目卡片与联系方式。
+2. 首页显示全部 GitHub 项目卡片与联系方式。
 3. `https://lx-cloud.top/admin.html` 登录成功。
 4. 后台新建/编辑/删除/排序后，`https://github.com/shu1371/blog` 出现对应提交。
 5. 后台上传 doc/docx/pdf 学习小结成功，前台「学习小结」页可下载；非法类型与超限文件被拒绝。

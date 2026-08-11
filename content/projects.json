@@ -1,5 +1,17 @@
 [
   {
+    "id": "vulhub-lab",
+    "title": "vulhub-lab",
+    "url": "https://github.com/shu1371/vulhub-lab",
+    "summary": "基于云服务器（Ubuntu + Docker）搭建的 Vulhub 漏洞靶场与 Vulfocus 漏洞集成平台，支持一键启停漏洞环境、Flag 通关与计分考核",
+    "tags": [
+      "Docker",
+      "Ubuntu",
+      "Vulhub",
+      "安全测试"
+    ]
+  },
+  {
     "id": "financial-analysis",
     "title": "financial-analysis",
     "url": "https://github.com/shu1371/financial-analysis",
@@ -18,6 +30,17 @@
     "summary": "积分优惠管理系统（C 控制台），用户/商家/管理员三角色与青铜到钻石会员等级",
     "tags": [
       "C"
+    ]
+  },
+  {
+    "id": "blog",
+    "title": "blog",
+    "url": "https://github.com/shu1371/blog",
+    "summary": "lxtoxyf 个人网站：项目作品展示、学习小结与带认证的内容后台，内容自动同步 GitHub，Node.js 零依赖实现",
+    "tags": [
+      "Node.js",
+      "Docker",
+      "Caddy"
     ]
   }
 ]
