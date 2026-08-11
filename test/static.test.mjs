@@ -61,3 +61,10 @@ test('未登录访问后台面板 303 跳转登录页', async () => {
   assert.equal(res.status, 303);
   assert.equal(res.headers.get('location'), '/admin.html');
 });
+
+test('学习小结页返回 200 且导航存在', async () => {
+  const res = await request('/summaries.html');
+  assert.equal(res.status, 200);
+  const html = await res.text();
+  assert.match(html, /学习小结/);
+});
