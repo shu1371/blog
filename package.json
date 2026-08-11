@@ -1,7 +1,22 @@
 {
   "name": "lxtoxyf-site",
+  "version": "1.0.0",
+  "description": "lxtoxyf 的个人网站：项目作品展示、学习小结文档与后台内容管理，内容自动同步 GitHub。",
   "private": true,
   "type": "module",
+  "author": "lxtoxyf",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shu1371/blog.git"
+  },
+  "keywords": [
+    "personal-website",
+    "nodejs",
+    "docker",
+    "caddy",
+    "cms"
+  ],
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test"
