@@ -1,0 +1,16 @@
+[
+  {
+    "id": "financial-analysis",
+    "title": "financial-analysis",
+    "url": "https://github.com/shu1371/financial-analysis",
+    "summary": "A股金融数据分析与可视化平台，支持K线/趋势图、技术指标、双数据源回退、用户体系与游戏中心",
+    "tags": ["Python", "Streamlit", "MySQL", "Plotly"]
+  },
+  {
+    "id": "points-discount",
+    "title": "points-discount",
+    "url": "https://github.com/shu1371/points-discount",
+    "summary": "积分优惠管理系统（C 控制台），用户/商家/管理员三角色与青铜到钻石会员等级",
+    "tags": ["C"]
+  }
+]
