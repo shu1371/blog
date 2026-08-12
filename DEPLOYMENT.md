@@ -90,6 +90,12 @@ docker exec caddy caddy reload --config /etc/caddy/Caddyfile
 - 元数据为 `/opt/lx-cloud.top/content/documents.json`，随 content 目录一起纳入备份。
 - 上传限制：doc / docx / pdf，单文件 ≤ 10MB。
 
+## 项目自动同步
+
+- 网站每 3 天自动从 GitHub（shu1371）同步项目列表；后台「从 GitHub 更新项目」按钮可立即同步。
+- 同步状态记录在 `/opt/lx-cloud.top/content/github-sync.json`，随 content 目录一起备份。
+- 同步只增不删：手动添加的非 GitHub 项目不会被移除；已存在条目的手动简介与标签会被保留。
+
 ## 6. 验证清单
 
 1. `curl -I https://lx-cloud.top` 返回 200 且证书有效。
