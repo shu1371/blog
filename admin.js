@@ -113,6 +113,34 @@ async function removeProject() {
   }
 }
 
+function updateSyncStatus(githubSync) {
+  const el = $('sync-status');
+  if (!githubSync || !githubSync.lastSync) { el.textContent = '上次同步：—'; return; }
+  const elapsed = Date.now() - new Date(githubSync.lastSync).getTime();
+  const mins = Math.floor(elapsed / 60000);
+  const label = mins < 1 ? '刚刚' : mins < 60 ? `${mins} 分钟前` : `${Math.floor(mins / 60)} 小时前`;
+  el.textContent = `上次同步：${label}`;
+}
+
+async function syncProjects() {
+  const button = $('sync-projects');
+  if (button.disabled) return;
+  button.disabled = true;
+  button.textContent = '正在同步…';
+  try {
+    const data = await request('/api/admin/projects/sync', { method: 'POST' });
+    notify(`同步完成：新增 ${data.added} 个、更新 ${data.updated} 个`);
+    state.projects = data.projects;
+    renderProjects();
+    updateSyncStatus(data);
+  } catch (error) {
+    notify(error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.textContent = '从 GitHub 更新项目';
+  }
+}
+
 function renderDocuments() {
   $('document-count').textContent = `${state.documents.length} 篇小结`;
   $('document-cards').innerHTML = state.documents.map(doc => `<div class="card-stack"><div class="item-card"><span class="card-symbol">↓</span><span class="card-copy"><strong>${escape(doc.title)}</strong><small>${escape(doc.filename)} · ${escape(doc.date)} · ${escape(formatSize(doc.size))}</small></span></div><div class="order-controls"><button type="button" class="danger-link" data-document-delete="${escape(doc.id)}">删除</button></div></div>`).join('') || '<p class="empty-state">还没有学习小结。</p>';
@@ -162,11 +190,13 @@ async function loadState() {
   state.documents = data.documents || [];
   renderProjects();
   renderDocuments();
+  updateSyncStatus(data.githubSync);
 }
 
 $('project-form').addEventListener('submit', saveProject);
 $('new-project').addEventListener('click', newProject);
 $('delete-project').addEventListener('click', removeProject);
+$('sync-projects').addEventListener('click', syncProjects);
 $('document-form').addEventListener('submit', uploadDocument);
 loadState().catch(error => {
   $('project-cards').innerHTML = `<p class="empty-state">${escape(error.message)}</p>`;

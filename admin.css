@@ -74,6 +74,13 @@ button { font: inherit; cursor: pointer; }
   background: #fff; font-size: 14px;
 }
 .order-controls button:disabled { opacity: 0.4; cursor: default; }
+.sync-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; }
+.sync-bar button {
+  border: 1px solid var(--line); background: #f0ead9; border-radius: 999px;
+  padding: 8px 16px; font-weight: 600; font-size: 13px;
+}
+.sync-bar button:disabled { opacity: 0.6; cursor: default; }
+.sync-bar span { font-size: 13px; color: #6b6b6b; }
 .danger-link {
   border: 1px solid var(--danger); color: var(--danger); background: #fff;
   border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600;
