@@ -1,5 +1,14 @@
 [
   {
+    "id": "sheshe-feisheng",
+    "title": "sheshe-feisheng",
+    "url": "https://github.com/shu1371/sheshe-feisheng",
+    "summary": "蛇蛇飞升 · 33重天 —— 多人实时联机修仙贪吃蛇（Node.js + WebSocket 服务器权威模拟）",
+    "tags": [
+      "JavaScript"
+    ]
+  },
+  {
     "id": "vulhub-lab",
     "title": "vulhub-lab",
     "url": "https://github.com/shu1371/vulhub-lab",
