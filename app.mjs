@@ -25,6 +25,11 @@ export function createApp(options = {}) {
   const sessionSecret = env.SESSION_SECRET;
   const repo = env.GITHUB_REPOSITORY || 'shu1371/blog';
   const branch = env.GITHUB_BRANCH || 'main';
+  const GITHUB_USER = 'shu1371';
+  const SYNC_INTERVAL_MS = 6 * 3600_000;
+  const SYNC_THRESHOLD_MS = 72 * 3600_000;
+  const syncFile = join(content, 'github-sync.json');
+  let syncing = false;
 
   const json = (res, status, body) => {
     res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', ...noStore });
@@ -199,6 +204,128 @@ export function createApp(options = {}) {
     return result;
   };
 
+  const githubFetch = async path => {
+    const headers = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const response = await fetch(`https://api.github.com${path}`, { headers });
+    if (!response.ok) throw new Error(`GitHub 请求失败（${response.status}）`);
+    return response.json();
+  };
+
+  const repoSummary = async repo => {
+    if (repo.description && String(repo.description).trim()) return text(repo.description, 280);
+    try {
+      const readme = await githubFetch(`/repos/${repo.full_name}/readme`);
+      const decoded = Buffer.from(readme.content, 'base64').toString('utf8');
+      const paragraph = decoded
+        .replace(/\r/g, '')
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line && !line.startsWith('#') && !line.startsWith('![') && !line.startsWith('```'))
+        .find(Boolean) || '';
+      return text(paragraph, 280) || `开源项目（${repo.language || 'GitHub'}）`;
+    } catch {
+      return `开源项目（${repo.language || 'GitHub'}）`;
+    }
+  };
+
+  const repoTags = repo => {
+    const topics = Array.isArray(repo.topics) ? repo.topics : [];
+    return tagList(topics.length ? topics : (repo.language ? [repo.language] : []));
+  };
+
+  const readSyncState = async () => {
+    try {
+      const raw = JSON.parse(await readFile(syncFile, 'utf8'));
+      return raw && raw.lastSync ? raw : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const shouldAutoSync = async () => {
+    const state = await readSyncState();
+    if (!state) return true;
+    return Date.now() - new Date(state.lastSync).getTime() > SYNC_THRESHOLD_MS;
+  };
+
+  const syncProjectsFromGithub = async () => {
+    if (syncing) return { syncing: true };
+    syncing = true;
+    try {
+      const repos = await githubFetch(`/users/${GITHUB_USER}/repos?per_page=100&sort=updated`);
+      const current = await readProjects();
+      const byName = new Map();
+      for (const repo of repos) {
+        if (!repo.fork) byName.set(repo.name, repo);
+      }
+      const merged = [];
+      const existing = new Set();
+      for (const project of current) {
+        if (project.url && /github\.com\/shu1371\//.test(project.url)) {
+          const repo = byName.get(project.id) || byName.get(project.title);
+          if (repo) {
+            merged.push({ ...project, url: repo.html_url });
+            existing.add(repo.name);
+          } else {
+            merged.push(project);
+          }
+        } else {
+          merged.push(project);
+        }
+      }
+      let added = 0;
+      let updated = 0;
+      const inserts = [];
+      for (const repo of repos) {
+        if (repo.fork) continue;
+        if (existing.has(repo.name)) {
+          const found = merged.find(p => p.id === repo.name || p.title === repo.name);
+          if (found && (!found.summary || !found.tags || !found.tags.length)) {
+            if (!found.summary) found.summary = await repoSummary(repo);
+            if (!found.tags || !found.tags.length) found.tags = repoTags(repo);
+            updated += 1;
+          }
+        } else {
+          inserts.push({
+            id: repo.name,
+            title: repo.name,
+            url: repo.html_url,
+            summary: await repoSummary(repo),
+            tags: repoTags(repo)
+          });
+          added += 1;
+        }
+      }
+      merged.unshift(...inserts);
+      await saveProjects(merged, 'content: sync projects from GitHub');
+      const state = {
+        lastSync: new Date().toISOString(),
+        repos: repos.length,
+        added,
+        updated,
+        message: '同步完成'
+      };
+      await mkdir(content, { recursive: true });
+      await writeFile(syncFile, JSON.stringify(state, null, 2) + '\n');
+      return { projects: merged, ...state };
+    } finally {
+      syncing = false;
+    }
+  };
+
+  const maybeAutoSync = async () => {
+    if (options.disableAutoSync) return;
+    try {
+      if (await shouldAutoSync()) {
+        const result = await syncProjectsFromGithub();
+        console.log(`auto sync projects: added=${result.added} updated=${result.updated}`);
+      }
+    } catch (error) {
+      console.error('auto sync failed:', error.message);
+    }
+  };
+
   const readProjects = async () => {
     const raw = JSON.parse(await readFile(projectFile, 'utf8'));
     return raw.map((project, index) => ({ ...project, id: project.id || `legacy-project-${index + 1}` }));
@@ -317,7 +444,19 @@ export function createApp(options = {}) {
       if (url.pathname.startsWith('/api/admin/')) {
         if (!authed(request)) return json(response, 401, { error: '请先登录' });
         if (request.method === 'GET' && url.pathname === '/api/admin/state') {
-          return json(response, 200, { projects: await readProjects(), documents: await readDocuments() });
+          return json(response, 200, {
+            projects: await readProjects(),
+            documents: await readDocuments(),
+            githubSync: await readSyncState()
+          });
+        }
+        if (request.method === 'POST' && url.pathname === '/api/admin/projects/sync') {
+          if (syncing) return json(response, 409, { error: '同步正在进行中，请稍候' });
+          try {
+            return json(response, 200, await syncProjectsFromGithub());
+          } catch (error) {
+            return json(response, 500, { error: error.message || '同步失败' });
+          }
         }
         if (request.method === 'POST' && url.pathname === '/api/admin/documents') {
           const { fields, file } = await parseMultipart(request, MAX_DOCUMENT_BYTES);
@@ -413,6 +552,11 @@ export function createApp(options = {}) {
       return json(response, status, { error: notFound ? 'not found' : (error.message || '服务错误') });
     }
   });
+
+  if (!options.disableAutoSync) {
+    setTimeout(() => { maybeAutoSync(); }, 1000);
+    setInterval(() => { maybeAutoSync(); }, SYNC_INTERVAL_MS).unref();
+  }
 
   return server;
 }

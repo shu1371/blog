@@ -19,6 +19,7 @@ before(async () => {
   server = createApp({
     siteRoot: repoRoot,
     contentRoot: join(base, 'content'),
+    disableAutoSync: true,
     env: { ADMIN_PASSWORD: 'test-pass', SESSION_SECRET: 'test-secret' }
   });
   await new Promise(resolve => server.listen(0, resolve));

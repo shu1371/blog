@@ -23,6 +23,7 @@ before(async () => {
   server = createApp({
     siteRoot: repoRoot,
     contentRoot: join(base, 'content'),
+    disableAutoSync: true,
     env: { ADMIN_PASSWORD: 'test-pass', SESSION_SECRET: 'test-secret' }
   });
   await new Promise(resolve => server.listen(0, resolve));
@@ -174,7 +175,7 @@ test('未提供 contentRoot 时使用 CONTENT_ROOT 环境变量', async () => {
   const envBase = await mkdtemp(join(tmpdir(), 'lxtoxyf-env-'));
   await mkdir(join(envBase, 'content'), { recursive: true });
   await writeFile(join(envBase, 'content', 'projects.json'), JSON.stringify([{ id: 'e1', title: '环境项目', url: 'https://example.com/e', summary: '简介', tags: ['Node'] }]));
-  const srv = createApp({ siteRoot: repoRoot, env: { CONTENT_ROOT: join(envBase, 'content') } });
+  const srv = createApp({ siteRoot: repoRoot, disableAutoSync: true, env: { CONTENT_ROOT: join(envBase, 'content') } });
   await new Promise(resolve => srv.listen(0, resolve));
   try {
     const res = await fetch(`http://127.0.0.1:${srv.address().port}/api/projects`);
