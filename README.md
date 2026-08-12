@@ -17,6 +17,7 @@
 - **学习小结**：管理员上传 doc / docx / pdf 文档（≤10MB），前台展示并支持下载
 - **内容后台**：密码登录（HMAC-SHA256 签名 Cookie，12 小时会话），项目新增 / 编辑 / 删除 / 上下移排序
 - **内容同步**：后台每次保存同时写入 GitHub 仓库（Contents API）与服务器本地，双重备份
+- **项目自动同步**：每 3 天自动从 GitHub 拉取项目列表，后台提供「从 GitHub 更新项目」一键同步按钮
 - **零依赖后端**：仅使用 Node.js 内置模块（`http` / `crypto` / `fetch`），无第三方依赖
 
 ## 技术栈
@@ -44,7 +45,9 @@ lxtoxyf-site/
 ├── admin.js / admin.css    # 后台逻辑与样式
 ├── assets/site.css         # 前台样式
 ├── content/projects.json   # 项目数据
-├── test/                   # node:test 测试（18 项）
+├── content/documents/      # 学习小结文档（doc/docx/pdf）
+├── content/github-sync.json# 项目自动同步状态
+├── test/                   # node:test 测试（35 项）
 ├── Dockerfile              # 生产镜像
 ├── deploy/Caddyfile        # 站点配置
 └── DEPLOYMENT.md           # 部署文档
@@ -79,7 +82,7 @@ npm start
 npm test
 ```
 
-共 18 项测试，覆盖项目 API、登录认证、增删改排序、字段校验、静态页面与内容目录环境变量。
+共 35 项测试，覆盖项目 API、登录认证、增删改排序、字段校验、学习小结上传下载、静态页面与 GitHub 项目自动同步。
 
 ## 部署
 
@@ -93,6 +96,14 @@ npm test
 2. 输入管理员密码登录
 3. 新建、编辑、删除项目，或使用 ↑ ↓ 调整展示顺序
 4. 每次保存会自动提交到本仓库的 `content/projects.json` 并写入服务器本地
+
+## 项目自动同步
+
+网站每 3 天自动从 GitHub（shu1371）同步项目列表，后台「从 GitHub 更新项目」按钮可立即触发：
+
+- 自动同步：服务启动时检查一次，之后每 6 小时复查，距上次同步超过 72 小时自动拉取。
+- 合并保留：只增不删，手动添加的非 GitHub 项目不会被移除，已存在条目的手动简介与标签会被保留。
+- 同步状态记录在 `content/github-sync.json`。
 
 ## License
 
