@@ -1,5 +1,14 @@
 [
   {
+    "id": "text2sql-injection-lab",
+    "title": "text2sql-injection-lab",
+    "url": "https://github.com/shu1371/text2sql-injection-lab",
+    "summary": "Text-to-SQL prompt injection lab: local reproducible attack & defense experiments (Ollama + qwen2.5 + SQLite)",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
     "id": "sheshe-feisheng",
     "title": "sheshe-feisheng",
     "url": "https://github.com/shu1371/sheshe-feisheng",
