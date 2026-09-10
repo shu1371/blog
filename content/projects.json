@@ -1,5 +1,102 @@
 [
   {
+    "id": "slopsquat-lab",
+    "title": "slopsquat-lab",
+    "url": "https://github.com/shu1371/slopsquat-lab",
+    "summary": "Slopsquatting hallucinated-package supply-chain attack reproduction lab (code + reproduction hints only)",
+    "tags": []
+  },
+  {
+    "id": "llm-supply-chain-backdoor-lab",
+    "title": "llm-supply-chain-backdoor-lab",
+    "url": "https://github.com/shu1371/llm-supply-chain-backdoor-lab",
+    "summary": "大模型供应链后门实战 PoC：Pickle RCE + 后门触发器（零依赖可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "vlm-multimodal-escape-lab",
+    "title": "vlm-multimodal-escape-lab",
+    "url": "https://github.com/shu1371/vlm-multimodal-escape-lab",
+    "summary": "多模态逃逸实战 PoC：以图像为暗通道绕过 VLM 安全护栏（零依赖可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "mcp-tool-poisoning-lab",
+    "title": "mcp-tool-poisoning-lab",
+    "url": "https://github.com/shu1371/mcp-tool-poisoning-lab",
+    "summary": "MCP 工具投毒实战 PoC：Confused Deputy / ToolSquatting（零依赖可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "rag-zero-click-lab",
+    "title": "rag-zero-click-lab",
+    "url": "https://github.com/shu1371/rag-zero-click-lab",
+    "summary": "enterprise RAG agent zero-click exfiltration lab",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "ai-spear-phishing-lab",
+    "title": "ai-spear-phishing-lab",
+    "url": "https://github.com/shu1371/ai-spear-phishing-lab",
+    "summary": "LLM personalized spear-phishing reproduction lab: template vs personalized email evasion & click-rate (code + hints only)",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "agent-memory-poisoning-lab",
+    "title": "agent-memory-poisoning-lab",
+    "url": "https://github.com/shu1371/agent-memory-poisoning-lab",
+    "summary": "LLM Agent 长期记忆投毒实战 PoC：MemMorph 范式本地复现（零依赖可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "agentic-ssrf-lab",
+    "title": "agentic-ssrf-lab",
+    "url": "https://github.com/shu1371/agentic-ssrf-lab",
+    "summary": "工具型智能体 SSRF 实战 PoC：Agent 被说服访问内网/云元数据（零依赖可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "browser-agent-injection-lab",
+    "title": "browser-agent-injection-lab",
+    "url": "https://github.com/shu1371/browser-agent-injection-lab",
+    "summary": "浏览器智能体间接注入实战 PoC：看订单即外带（零依赖可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "agentic-rce-lab",
+    "title": "agentic-rce-lab",
+    "url": "https://github.com/shu1371/agentic-rce-lab",
+    "summary": "Agentic RCE 实战 PoC：工具型智能体命令执行劫持（直接注入+网页诱导，零依赖可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "id": "multi-agent-collusion-lab",
+    "title": "multi-agent-collusion-lab",
+    "url": "https://github.com/shu1371/multi-agent-collusion-lab",
+    "summary": "多智能体协作中毒实战 PoC：单点投毒 Agent 通过主动外发+游说队友撬动整条协作链（零依赖，可复跑）",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
     "id": "text2sql-injection-lab",
     "title": "text2sql-injection-lab",
     "url": "https://github.com/shu1371/text2sql-injection-lab",
